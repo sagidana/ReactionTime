@@ -44,6 +44,8 @@ ImageDetails* ScreenActions::TakeScreenshot(int displayNumber)
 			return TakeScreenshot(*iterator);
 		index++;
 	}
+
+	return NULL;
 }
 
 ImageDetails* ScreenActions::TakeScreenshot(RECT rectangle)
@@ -90,6 +92,8 @@ ImageDetails* ScreenActions::TakeScreenshot(HWND hWindow)
 
 		return TakeScreenshot(*windowRect);
 	}
+
+	return NULL;
 }
 
 int ScreenActions::GetNumberOfMonitors()
