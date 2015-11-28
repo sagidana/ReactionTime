@@ -6,7 +6,6 @@ InputActions::InputActions()
 {
 }
 
-
 InputActions* InputActions::GetInstance()
 {
 	if (m_Instance == NULL)
