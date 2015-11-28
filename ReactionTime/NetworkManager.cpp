@@ -146,22 +146,32 @@ pcap_if_t* NetworkManager::GetNetworkAdapters()
 	return NULL;
 }
 
-bool NetworkManager::StartCapture(char* name, void(*packetHandler)(u_char *param, const struct pcap_pkthdr *header, const u_char *data))
+bool NetworkManager::TargetAdapter(char* name)
 {
-	return StartCapture(getNetworkAdapterByName(name), packetHandler);
+	return TargetAdapter(getNetworkAdapterByName(name));
 }
 
-bool NetworkManager::StartCapture(int index, void(*packetHandler)(u_char *param, const struct pcap_pkthdr *header, const u_char *data))
+bool NetworkManager::TargetAdapter(int index)
 {
-	return StartCapture(getNetworkAdapterByIndex(index), packetHandler);
+	return TargetAdapter(getNetworkAdapterByIndex(index));
 }
 
-bool NetworkManager::StartCapture(pcap_if_t* networkAdapter, void(*packetHandler)(u_char *param, const struct pcap_pkthdr *header, const u_char *data))
-{	
+bool NetworkManager::TargetAdapter(pcap_if_t* networkAdapter)
+{
+	if (networkAdapter == NULL)
+		return false;
+
 	m_ActiveAdapter = networkAdapter;
-
 	m_ActiveAdapterHandle = pcap_open(networkAdapter->name, PACKETSIZE, PCAP_OPENFLAG_PROMISCUOUS, 1000, NULL, ErrorMessage);
 
+	if (m_ActiveAdapterHandle == NULL)
+		return false;
+
+	return true;
+}
+
+bool NetworkManager::StartCapture(void(*packetHandler)(u_char *param, const struct pcap_pkthdr *header, const u_char *data))
+{	
 	if (m_ActiveAdapterHandle == NULL)
 		return false;
 

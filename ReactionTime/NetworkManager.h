@@ -33,10 +33,11 @@ public:
 	NetworkManager();
 	~NetworkManager();
 
+	bool TargetAdapter(char* name);
+	bool TargetAdapter(int index);
+	bool TargetAdapter(pcap_if_t* networkAdapter);
 	bool SetFilter(string filteringExpression);
-	bool StartCapture(char* name, void(*packetHandler)(u_char *param, const struct pcap_pkthdr *header, const u_char *data));
-	bool StartCapture(int index, void(*packetHandler)(u_char *param, const struct pcap_pkthdr *header, const u_char *data));
-	bool StartCapture(pcap_if_t* networkAdapter, void(*packetHandler)(u_char *param, const struct pcap_pkthdr *header, const u_char *data));
+	bool StartCapture(void(*packetHandler)(u_char *param, const struct pcap_pkthdr *header, const u_char *data));
 	void PrintNetworkAdapters();
 	pcap_if_t* GetNetworkAdapters();
 };
