@@ -97,7 +97,7 @@ void NetworkManager::printAdapterAddresses(pcap_addr_t* adapterAddresses)
 		case AF_INET:
 			printf("\tAddress Family Name: AF_INET\n");
 			if (adapterAddress->addr)
-				cout << "'tAdsress: " << convertIpToString(((struct sockaddr_in *)adapterAddress->addr)->sin_addr.s_addr) << endl;
+				cout << "\tAdsress: " << convertIpToString(((struct sockaddr_in *)adapterAddress->addr)->sin_addr.s_addr) << endl;
 			if (adapterAddress->netmask)
 				cout << "\tNetmask: " << convertIpToString(((struct sockaddr_in *)adapterAddress->netmask)->sin_addr.s_addr) << endl;
 			if (adapterAddress->broadaddr)
@@ -170,12 +170,16 @@ bool NetworkManager::TargetAdapter(pcap_if_t* networkAdapter)
 	return true;
 }
 
-bool NetworkManager::StartCapture(void(*packetHandler)(u_char *param, const struct pcap_pkthdr *header, const u_char *data))
+bool NetworkManager::StartCapture(void(*packetHandler)(u_char *param, const struct pcap_pkthdr *header, const u_char *data), bool isAsync)
 {	
 	if (m_ActiveAdapterHandle == NULL)
 		return false;
 
-	pcap_dispatch(m_ActiveAdapterHandle, 0, packetHandler, NULL);
+	if (isAsync)
+		pcap_dispatch(m_ActiveAdapterHandle, 0, packetHandler, NULL);
+	else
+		pcap_loop(m_ActiveAdapterHandle, 0, packetHandler, NULL);
+
 	return true;
 }
 

@@ -30,15 +30,15 @@ private:
 public:
 	char ErrorMessage[PCAP_ERRBUF_SIZE];
 	
-	NetworkManager();
-	~NetworkManager();
+	__declspec(dllexport) NetworkManager();
+	__declspec(dllexport) ~NetworkManager();
 
-	bool TargetAdapter(char* name);
-	bool TargetAdapter(int index);
-	bool TargetAdapter(pcap_if_t* networkAdapter);
-	bool SetFilter(string filteringExpression);
-	bool StartCapture(void(*packetHandler)(u_char *param, const struct pcap_pkthdr *header, const u_char *data));
-	void PrintNetworkAdapters();
-	pcap_if_t* GetNetworkAdapters();
+	__declspec(dllexport) bool TargetAdapter(char* name);
+	__declspec(dllexport) bool TargetAdapter(int index);
+	__declspec(dllexport) bool TargetAdapter(pcap_if_t* networkAdapter);
+	__declspec(dllexport) bool SetFilter(string filteringExpression);
+	__declspec(dllexport) bool StartCapture(void(*packetHandler)(u_char *param, const struct pcap_pkthdr *header, const u_char *data), bool isAsync = true);
+	__declspec(dllexport) void PrintNetworkAdapters();
+	__declspec(dllexport) pcap_if_t* GetNetworkAdapters();
 };
 
