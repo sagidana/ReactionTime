@@ -1,5 +1,5 @@
 #pragma once
-class RTManager
+class __declspec(dllexport) RTManager
 {
 public:
 	RTManager();

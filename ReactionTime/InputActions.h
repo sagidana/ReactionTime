@@ -4,14 +4,14 @@
 #endif
 
 #pragma once
-class InputActions
+class __declspec(dllexport) InputActions
 {
 private: 
 	static InputActions* m_Instance;
 	InputActions();
 public:
-	static __declspec(dllexport) InputActions* GetInstance();
-	__declspec(dllexport) void Mouse_LeftClick();
-	__declspec(dllexport) ~InputActions();
+	static InputActions* GetInstance();
+	void Mouse_LeftClick();
+	~InputActions();
 };
 

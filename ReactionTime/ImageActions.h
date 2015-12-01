@@ -10,14 +10,14 @@
 
 
 #pragma once
-class ImageActions
+class __declspec(dllexport) ImageActions
 {
 private:
 	static ImageActions* m_Instance;
 	ImageActions();
 public:
-	static __declspec(dllexport) ImageActions* GetInstance();
-	__declspec(dllexport) POINT* FindFirstColorPosition(ImageDetails* imageDetails, COLORREF color);
-	__declspec(dllexport) ~ImageActions();
+	static ImageActions* GetInstance();
+	POINT* FindFirstColorPosition(ImageDetails* imageDetails, COLORREF color);
+	~ImageActions();
 };
 

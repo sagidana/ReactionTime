@@ -4,12 +4,12 @@
 #endif
 
 #pragma once
-class MemoryCodeManager
+class __declspec(dllexport) MemoryCodeManager
 {
 private:
 public:
-	__declspec(dllexport) MemoryCodeManager();
-	__declspec(dllexport) BYTE* GetByteArrayOfFunction(void(*func)());
-	__declspec(dllexport) ~MemoryCodeManager();
+	MemoryCodeManager();
+	BYTE* GetByteArrayOfFunction(void(*func)());
+	~MemoryCodeManager();
 };
 

@@ -17,7 +17,7 @@
 using namespace std;
 
 #pragma once
-class ScreenActions
+class __declspec(dllexport) ScreenActions
 {
 private :
 	RECT m_Rectangle;
@@ -26,15 +26,15 @@ private :
 	void initializeScreenParameters();
 	static BOOL CALLBACK monitorsEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData);
 public:
-	__declspec(dllexport) ScreenActions();
-	__declspec(dllexport) ImageDetails* TakeScreenshot();
-	__declspec(dllexport) ImageDetails* TakeScreenshot(int displayNumber);
-	__declspec(dllexport) ImageDetails* TakeScreenshot(RECT rectangle);
-	__declspec(dllexport) ImageDetails* TakeScreenshot(HWND hWindow);
-	__declspec(dllexport) COLORREF GetPixelColor(POINT position);
-	__declspec(dllexport) POINT* GetCursorPosition();
-	__declspec(dllexport) POINT* ConvertDisplayLocationToScreenPosition(POINT* imageLocation, int displayNumber);
-	__declspec(dllexport) int GetNumberOfMonitors();
-	__declspec(dllexport) ~ScreenActions();
+	ScreenActions();
+	ImageDetails* TakeScreenshot();
+	ImageDetails* TakeScreenshot(int displayNumber);
+	ImageDetails* TakeScreenshot(RECT rectangle);
+	ImageDetails* TakeScreenshot(HWND hWindow);
+	COLORREF GetPixelColor(POINT position);
+	POINT* GetCursorPosition();
+	POINT* ConvertDisplayLocationToScreenPosition(POINT* imageLocation, int displayNumber);
+	int GetNumberOfMonitors();
+	~ScreenActions();
 };
 

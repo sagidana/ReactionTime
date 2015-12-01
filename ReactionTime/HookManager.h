@@ -20,7 +20,7 @@
 #endif
 
 #pragma once
-class HookManager
+class __declspec(dllexport) HookManager
 {
 private:
 	static bool m_IsHooking;
@@ -32,12 +32,12 @@ private:
 	static void installHook();
 	static void terminateThread();
 public:
-	__declspec(dllexport) HookManager();
-	__declspec(dllexport) ~HookManager();
-	__declspec(dllexport) void StartHooking();
-	__declspec(dllexport) void StopHooking();
-	__declspec(dllexport) void RemoveHook(void(*callbackFunction)());
-	__declspec(dllexport) void RemoveHook(DWORD key);
-	__declspec(dllexport) void SetHook(DWORD key, void(*callbackFunction)());
+	HookManager();
+	~HookManager();
+	void StartHooking();
+	void StopHooking();
+	void RemoveHook(void(*callbackFunction)());
+	void RemoveHook(DWORD key);
+	void SetHook(DWORD key, void(*callbackFunction)());
 };
 
