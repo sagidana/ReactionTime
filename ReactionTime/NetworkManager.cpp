@@ -1,5 +1,63 @@
 #include "NetworkManager.h"
 
+pcap_t* NetworkManager::m_ActiveAdapterHandle;
+
+bool NetworkManager::translatePacket(const u_char* packet, ethernetHeader** ethernet, ipHeader** ip, tcpHeader** tcp, char** payload)
+{
+	u_int ipHeaderLength;
+	u_int tcpHeaderLength;
+
+	if (pcap_datalink(m_ActiveAdapterHandle) == DLT_EN10MB) // if datalink is ethernet
+	{
+		*ethernet = (ethernetHeader*)(packet);
+		*ip = (ipHeader*)(packet + ETHERNET_LENGTH); // Found the ip header
+		ipHeaderLength = IP_HL(*ip) * 4;
+
+		if (ipHeaderLength < 20) // Bad ip header
+			return false;
+
+		*tcp = (tcpHeader*)(packet + ETHERNET_LENGTH + ipHeaderLength); // Found the tcp header
+		tcpHeaderLength = TH_OFF(*tcp) * 4;
+
+		if (tcpHeaderLength < 20) // Bad tcp header
+			return false;
+
+		*payload = (char *)(packet + ETHERNET_LENGTH + ipHeaderLength + tcpHeaderLength);
+
+		return true;
+	}
+
+	return false;
+}
+
+void __cdecl NetworkManager::genericPacketsHandler(u_char* param, const pcap_pkthdr* header, const u_char* packet)
+{
+	ethernetHeader* ethernet;
+	ipHeader* ip;
+	tcpHeader* tcp;
+	char* payload;
+	
+	if (translatePacket(packet, &ethernet, &ip, &tcp, &payload))
+	{
+		u_int ipHeaderLength = IP_HL(ip) * 4;
+		u_int tcpHeaderLength = TH_OFF(tcp) * 4;
+		
+		if (header->caplen < ETHERNET_LENGTH + ipHeaderLength + tcpHeaderLength) //Length of the data captured was not enough,
+			return;
+
+		u_int payloadLength = header->caplen - ETHERNET_LENGTH - ipHeaderLength - tcpHeaderLength;
+	
+		for (int index = 0; index < payloadLength; index++)
+		{
+			if (isprint(payload[index]))
+				cout << payload[index];
+
+			if ((index % 70 == 0) || index == payloadLength - 1)
+				cout << endl;
+		}
+	}
+}
+
 NetworkManager::NetworkManager()
 {
 	initializeAttachedDevices();
@@ -170,6 +228,19 @@ bool NetworkManager::TargetAdapter(pcap_if_t* networkAdapter)
 	return true;
 }
 
+bool NetworkManager::StartCapture(bool isAsync)
+{
+	if (m_ActiveAdapterHandle == NULL)
+		return false;
+
+	if (isAsync)
+		pcap_dispatch(m_ActiveAdapterHandle, 0, genericPacketsHandler, NULL);
+	else
+		pcap_loop(m_ActiveAdapterHandle, 0, genericPacketsHandler, NULL);
+
+	return true;
+}
+
 bool NetworkManager::StartCapture(void(*packetHandler)(u_char *param, const struct pcap_pkthdr *header, const u_char *data), bool isAsync)
 {	
 	if (m_ActiveAdapterHandle == NULL)
@@ -200,4 +271,9 @@ bool NetworkManager::SetFilter(string filteringExpression)
 		return false;
 
 	return true;
+}
+
+void NetworkManager::SendPacket()
+{
+	ethernetHeader
 }
