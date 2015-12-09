@@ -25,49 +25,62 @@ struct ethernetHeader {
 };
 
 /* IP header */
-struct ipHeader {
-	u_char ip_vhl;		/* version << 4 | header length >> 2 */
-	u_char ip_tos;		/* type of service */
-	u_short ip_len;		/* total length */
-	u_short ip_id;		/* identification */
-	u_short ip_off;		/* fragment offset field */
-#define IP_RF 0x8000		/* reserved fragment flag */
-#define IP_DF 0x4000		/* dont fragment flag */
-#define IP_MF 0x2000		/* more fragments flag */
-#define IP_OFFMASK 0x1fff	/* mask for fragmenting bits */
-	u_char ip_ttl;		/* time to live */
-	u_char ip_p;		/* protocol */
-	u_short ip_sum;		/* checksum */
-	struct in_addr ip_src, ip_dst; /* source and dest address */
-};
-#define IP_HL(ip)		(((ip)->ip_vhl) & 0x0f)
-#define IP_V(ip)		(((ip)->ip_vhl) >> 4)
+typedef struct ipHeader
+{
+	unsigned char  ip_header_len : 4;  // 4-bit header length (in 32-bit words) normally=5 (Means 20 Bytes may be 24 also)
+	unsigned char  ip_version : 4;  // 4-bit IPv4 version
+	unsigned char  ip_tos;           // IP type of service
+	unsigned short ip_total_length;  // Total length
+	unsigned short ip_id;            // Unique identifier 
 
-/* TCP header */
-typedef u_int tcp_seq;
+	unsigned char  ip_frag_offset : 5;        // Fragment offset field
 
-struct tcpHeader {
-	u_short th_sport;	/* source port */
-	u_short th_dport;	/* destination port */
-	tcp_seq th_seq;		/* sequence number */
-	tcp_seq th_ack;		/* acknowledgement number */
-	u_char th_offx2;	/* data offset, rsvd */
-#define TH_OFF(th)	(((th)->th_offx2 & 0xf0) >> 4)
-	u_char th_flags;
-#define TH_FIN 0x01
-#define TH_SYN 0x02
-#define TH_RST 0x04
-#define TH_PUSH 0x08
-#define TH_ACK 0x10
-#define TH_URG 0x20
-#define TH_ECE 0x40
-#define TH_CWR 0x80
-#define TH_FLAGS (TH_FIN|TH_SYN|TH_RST|TH_ACK|TH_URG|TH_ECE|TH_CWR)
-	u_short th_win;		/* window */
-	u_short th_sum;		/* checksum */
-	u_short th_urp;		/* urgent pointer */
+	unsigned char  ip_more_fragment : 1;
+	unsigned char  ip_dont_fragment : 1;
+	unsigned char  ip_reserved_zero : 1;
+
+	unsigned char  ip_frag_offset1;    //fragment offset
+
+	unsigned char  ip_ttl;           // Time to live
+	unsigned char  ip_protocol;      // Protocol(TCP,UDP etc)
+	unsigned short ip_checksum;      // IP checksum
+	unsigned int   ip_srcaddr;       // Source address
+	unsigned int   ip_destaddr;      // Source address
 };
 
+// TCP header
+struct tcpHeader
+{
+	unsigned short source_port;   // source port
+	unsigned short dest_port;     // destination port
+	unsigned int sequence;        // sequence number - 32 bits
+	unsigned int acknowledge;     // acknowledgement number - 32 bits
+
+	unsigned char ns : 1;          //Nonce Sum Flag Added in RFC 3540.
+	unsigned char reserved_part1 : 3; //according to rfc
+	unsigned char data_offset : 4;    /*The number of 32-bit words
+									  in the TCP header.
+									  This indicates where the data begins.
+									  The length of the TCP header
+									  is always a multiple
+									  of 32 bits.*/
+
+	unsigned char fin : 1; //Finish Flag
+	unsigned char syn : 1; //Synchronise Flag
+	unsigned char rst : 1; //Reset Flag
+	unsigned char psh : 1; //Push Flag
+	unsigned char ack : 1; //Acknowledgement Flag
+	unsigned char urg : 1; //Urgent Flag
+
+	unsigned char ecn : 1; //ECN-Echo Flag
+	unsigned char cwr : 1; //Congestion Window Reduced Flag
+
+	////////////////////////////////
+
+	unsigned short window; // window
+	unsigned short checksum; // checksum
+	unsigned short urgent_pointer; // urgent pointer
+};
 struct ImageDetails
 {
 	BYTE* data;

@@ -21,7 +21,9 @@ class __declspec(dllexport) NetworkManager
 {
 private:
 	static void __cdecl genericPacketsHandler(u_char *param, const struct pcap_pkthdr *header, const u_char *data);
-	static bool NetworkManager::translatePacket(const u_char* packet, ethernetHeader** ethernet, ipHeader** ip, tcpHeader** tcp, char** payload);
+	static bool translatePacket(const u_char* packet, ethernetHeader** ethernet, ipHeader** ip, tcpHeader** tcp, char** payload);
+	static unsigned int getTcpLength(tcpHeader* tcp);
+	static unsigned int getIpLength(ipHeader* ip);
 	static pcap_t* m_ActiveAdapterHandle;
 	
 	pcap_if_t* m_NetworkAdapters;
@@ -35,6 +37,7 @@ private:
 	pcap_if_t* getNetworkAdapterByIndex(int index);
 	pcap_if_t* getNetworkAdapterByName(char* name);
 	unsigned int getNetmask();
+	unsigned short calculateChecksum(unsigned short* ip, int length);
 	
 public:
 	char ErrorMessage[PCAP_ERRBUF_SIZE];
@@ -49,7 +52,10 @@ public:
 	bool StartCapture(bool isAsync = true);
 	bool StartCapture(void(*packetHandler)(u_char *param, const struct pcap_pkthdr *header, const u_char *data), bool isAsync = true);
 	void PrintNetworkAdapters();
-	void SendPacket();
+	void SendPacket(ethernetHeader* ethernet, ipHeader* ip, tcpHeader* tcp, char* payload, unsigned int payloadLength);
+	ipHeader* CreateIpHeader(PCTSTR sourceIpAddress, PCTSTR destinationIpAddress, unsigned int payloadLength, unsigned char protocol = IPPROTO_TCP, unsigned char ttl = 3);
+	tcpHeader* CreateTcpHeader(unsigned short sourcePort, unsigned short destinationPort, unsigned int sequence, unsigned int acknowledge, unsigned short windowsSize = 64240);
+	ethernetHeader* CreateEthernetHeader(unsigned char sourceMac[6], unsigned char* destinationMac[6], unsigned short type = 0x0080);
 	pcap_if_t* GetNetworkAdapters();
 };
 

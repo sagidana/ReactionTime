@@ -11,13 +11,13 @@ bool NetworkManager::translatePacket(const u_char* packet, ethernetHeader** ethe
 	{
 		*ethernet = (ethernetHeader*)(packet);
 		*ip = (ipHeader*)(packet + ETHERNET_LENGTH); // Found the ip header
-		ipHeaderLength = IP_HL(*ip) * 4;
+		ipHeaderLength = getIpLength(*ip);
 
 		if (ipHeaderLength < 20) // Bad ip header
 			return false;
 
 		*tcp = (tcpHeader*)(packet + ETHERNET_LENGTH + ipHeaderLength); // Found the tcp header
-		tcpHeaderLength = TH_OFF(*tcp) * 4;
+		tcpHeaderLength = getTcpLength(*tcp);
 
 		if (tcpHeaderLength < 20) // Bad tcp header
 			return false;
@@ -39,8 +39,8 @@ void __cdecl NetworkManager::genericPacketsHandler(u_char* param, const pcap_pkt
 	
 	if (translatePacket(packet, &ethernet, &ip, &tcp, &payload))
 	{
-		u_int ipHeaderLength = IP_HL(ip) * 4;
-		u_int tcpHeaderLength = TH_OFF(tcp) * 4;
+		u_int ipHeaderLength = getIpLength(ip);
+		u_int tcpHeaderLength = getTcpLength(tcp);
 		
 		if (header->caplen < ETHERNET_LENGTH + ipHeaderLength + tcpHeaderLength) //Length of the data captured was not enough,
 			return;
@@ -122,6 +122,20 @@ char* NetworkManager::convertIpToString(u_long in)
 	return output[which];
 }
 
+unsigned short NetworkManager::calculateChecksum(unsigned short* ip, int length)
+{
+	int i, sum = 0;
+
+	for (i = 0; i < length / 2; i++){
+		if (i == 5) continue;
+		sum += *ip++;
+	}
+
+	while (sum >> 16)
+		sum = (sum & 0xffff) + (sum >> 16);
+	return (u_short)~sum;
+}
+
 char* NetworkManager::ConvertIpv6ToString(struct sockaddr *socketAddress, char *address, int addressLength)
 {
 	socklen_t sockaddrlen;
@@ -189,6 +203,16 @@ unsigned int NetworkManager::getNetmask()
 		return ((struct sockaddr_in *)(m_ActiveAdapter->addresses->netmask))->sin_addr.S_un.S_addr;
 	else
 		return 0xFFFFFF;
+}
+
+unsigned int NetworkManager::getTcpLength(tcpHeader* tcp)
+{
+	return tcp->data_offset * 4;
+}
+
+unsigned int NetworkManager::getIpLength(ipHeader* ip)
+{
+	return ip->ip_header_len * 4;
 }
 
 void NetworkManager::PrintNetworkAdapters()
@@ -273,7 +297,82 @@ bool NetworkManager::SetFilter(string filteringExpression)
 	return true;
 }
 
-void NetworkManager::SendPacket()
+tcpHeader* NetworkManager::CreateTcpHeader(unsigned short sourcePort, unsigned short destinationPort, unsigned int sequence, unsigned int acknowledge, unsigned short windowsSize)
 {
-	ethernetHeader
+	tcpHeader* ret_TcpHeader = new tcpHeader;
+
+	ret_TcpHeader->source_port = htons(sourcePort);
+	ret_TcpHeader->dest_port = htons(destinationPort);
+	ret_TcpHeader->sequence = htons(sequence);
+	ret_TcpHeader->acknowledge = htons(acknowledge);
+	ret_TcpHeader->reserved_part1 = 0;
+	ret_TcpHeader->data_offset = 5;
+	ret_TcpHeader->fin = 0;
+	ret_TcpHeader->syn = 0;
+	ret_TcpHeader->rst = 0;
+	ret_TcpHeader->psh = 0;
+	ret_TcpHeader->ack = 0;
+	ret_TcpHeader->urg = 0;
+	ret_TcpHeader->ecn = 0;
+	ret_TcpHeader->cwr = 0;
+	ret_TcpHeader->window = htons(windowsSize);
+	ret_TcpHeader->checksum = 0;
+	ret_TcpHeader->urgent_pointer = 0;
+
+	return ret_TcpHeader;
+}
+
+ipHeader* NetworkManager::CreateIpHeader(PCTSTR sourceIpAddress, PCTSTR destinationIpAddress, unsigned int payloadLength, unsigned char protocol, unsigned char ttl)
+{
+	ipHeader* ret_IpHeader = new ipHeader;
+
+	ret_IpHeader->ip_version = 4;
+	ret_IpHeader->ip_header_len = 5; //In double words thats 4 bytes
+	ret_IpHeader->ip_tos = 0;
+	ret_IpHeader->ip_total_length = htons(sizeof(ipHeader) + sizeof(tcpHeader) + payloadLength);
+	ret_IpHeader->ip_id = htons(2);
+	ret_IpHeader->ip_frag_offset = 0;
+	ret_IpHeader->ip_reserved_zero = 0;
+	ret_IpHeader->ip_dont_fragment = 1;
+	ret_IpHeader->ip_more_fragment = 0;
+	ret_IpHeader->ip_frag_offset1 = 0;
+	ret_IpHeader->ip_ttl = ttl;
+	ret_IpHeader->ip_protocol = protocol;
+	InetPton(AF_INET, sourceIpAddress, &ret_IpHeader->ip_srcaddr);
+	InetPton(AF_INET, destinationIpAddress, &ret_IpHeader->ip_destaddr);
+	ret_IpHeader->ip_checksum = 0;
+	ret_IpHeader->ip_checksum = calculateChecksum((unsigned short*)ret_IpHeader, sizeof(ipHeader));
+
+	return ret_IpHeader;
+}
+
+ethernetHeader* NetworkManager::CreateEthernetHeader(unsigned char sourceMac[6], unsigned char* destinationMac[6], unsigned short type)
+{
+	ethernetHeader* ret_ethernetHeader = new ethernetHeader;
+	
+	memcpy(ret_ethernetHeader, sourceMac, 6);
+	memcpy(ret_ethernetHeader + 6, destinationMac, 6);
+	ret_ethernetHeader->ether_type = type;
+
+	return ret_ethernetHeader;
+}
+
+void NetworkManager::SendPacket(ethernetHeader* ethernet, ipHeader* ip, tcpHeader* tcp, char* payload, unsigned int payloadLength)
+{
+	unsigned int packetLength = payloadLength + ETHERNET_LENGTH + getIpLength(ip) + getTcpLength(tcp);
+	const unsigned char* packet = new unsigned char[packetLength];
+
+	ethernetHeader* ethernetOffset = (ethernetHeader*)packet;
+	ipHeader* ipOffset = (ipHeader*)(packet + ETHERNET_LENGTH);
+	tcpHeader* tcpOffset = (tcpHeader*)(packet + ETHERNET_LENGTH + getIpLength(ip));
+	char* payloadOffset = (char*)(packet + ETHERNET_LENGTH + getIpLength(ip) + getTcpLength(tcp));
+
+	memcpy(ethernetOffset, ethernet, ETHERNET_LENGTH);
+	memcpy(ipOffset, ip, getIpLength(ip));
+	memcpy(tcpOffset, tcp, getTcpLength(tcp));
+	memcpy(payloadOffset, payload, payloadLength);
+
+	pcap_sendpacket(m_ActiveAdapterHandle, packet, packetLength);
+
+	delete packet;
 }
