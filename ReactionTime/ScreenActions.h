@@ -1,22 +1,10 @@
-﻿#ifndef SAGI_WINDOWSH
-#define SAGI_WINDOWSH
+﻿#pragma once
+
 #include <Windows.h>
-#endif
-
-#ifndef SAGI_STRUCTERS
-#define SAGI_STRUCTERS
-#include "Structers.h"
-#endif
-
-#ifndef SAGI_LIST
-#define SAGI_LIST
+#include "Structs.h"
 #include <list>
-#endif
-
 #include <iostream>
-using namespace std;
 
-#pragma once
 class __declspec(dllexport) ScreenActions
 {
 private :

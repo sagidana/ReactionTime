@@ -1,7 +1,6 @@
-#ifndef SAGI_WINDOWSH
+#pragma once 
+
 #include <Windows.h>
-#define SAGI_WINDOWSH
-#endif
 
 struct KeyHandler
 {
@@ -81,6 +80,7 @@ struct tcpHeader
 	unsigned short checksum; // checksum
 	unsigned short urgent_pointer; // urgent pointer
 };
+
 struct ImageDetails
 {
 	BYTE* data;

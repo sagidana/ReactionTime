@@ -1,9 +1,7 @@
-#ifndef SAGI_WINDOWSH
-#define SAGI_WINDOWSH
-#include <Windows.h>
-#endif
-
 #pragma once
+
+#include <Windows.h>
+
 class __declspec(dllexport) InputActions
 {
 private: 

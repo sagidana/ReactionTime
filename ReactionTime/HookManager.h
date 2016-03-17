@@ -1,25 +1,11 @@
-#ifndef SAGI_WINDOWSH
-#define SAGI_WINDOWSH
+#pragma once
+
 #include <Windows.h>
-#endif
-
-#ifndef SAGI_STRUCTERS
-#define SAGI_STRUCTERS
-#include "Structers.h"
-#endif
-
-#ifndef SAGI_THREAD
-#define SAGI_THREAD
+#include "Structs.h"
 #include <mutex>
 #include <thread>
-#endif
-
-#ifndef SAGI_LIST
-#define SAGI_LIST
 #include <list>
-#endif
 
-#pragma once
 class __declspec(dllexport) HookManager
 {
 private:

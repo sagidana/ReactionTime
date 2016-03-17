@@ -1,5 +1,7 @@
 #include "NetworkManager.h"
 
+using namespace std;
+
 pcap_t* NetworkManager::m_ActiveAdapterHandle;
 
 bool NetworkManager::translatePacket(const u_char* packet, ethernetHeader** ethernet, ipHeader** ip, tcpHeader** tcp, char** payload)
@@ -346,12 +348,12 @@ ipHeader* NetworkManager::CreateIpHeader(PCTSTR sourceIpAddress, PCTSTR destinat
 	return ret_IpHeader;
 }
 
-ethernetHeader* NetworkManager::CreateEthernetHeader(unsigned char sourceMac[6], unsigned char* destinationMac[6], unsigned short type)
+ethernetHeader* NetworkManager::CreateEthernetHeader(unsigned char sourceMac[6], unsigned char destinationMac[6], unsigned short type)
 {
 	ethernetHeader* ret_ethernetHeader = new ethernetHeader;
 	
-	memcpy(ret_ethernetHeader, sourceMac, 6);
-	memcpy(ret_ethernetHeader + 6, destinationMac, 6);
+	memcpy(ret_ethernetHeader, destinationMac, 6);
+	memcpy((char*)ret_ethernetHeader + 6, sourceMac, 6);
 	ret_ethernetHeader->ether_type = type;
 
 	return ret_ethernetHeader;
