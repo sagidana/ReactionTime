@@ -1,9 +1,11 @@
 #include "HookManager.h"
 
-std::list<KeyHandler> HookManager::m_KeyHanlders;
+using namespace std;
+
+list<KeyHandler> HookManager::m_KeyHanlders;
 HHOOK HookManager::m_hHook;
-std::thread HookManager::m_hookThread;
-std::mutex HookManager::m_MTX;
+thread HookManager::m_hookThread;
+mutex HookManager::m_MTX;
 bool HookManager::m_IsHooking;
 
 LRESULT CALLBACK HookManager::keyStrokeHandler(int nCode, WPARAM wParam, LPARAM lParam)
@@ -31,7 +33,7 @@ LRESULT CALLBACK HookManager::keyStrokeHandler(int nCode, WPARAM wParam, LPARAM 
 HookManager::HookManager()
 {
 	m_IsHooking = false;
-	m_KeyHanlders = std::list<KeyHandler>();
+	m_KeyHanlders = list<KeyHandler>();
 	m_hHook = NULL;
 }
 

@@ -29,7 +29,7 @@
     <ClCompile Include="MemoryCodeManager.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="NetworkManager.cpp">
+    <ClCompile Include="NetworkAssembler.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -52,10 +52,10 @@
     <ClInclude Include="MemoryCodeManager.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="NetworkManager.h">
+    <ClInclude Include="Structs.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Structs.h">
+    <ClInclude Include="NetworkAssembler.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

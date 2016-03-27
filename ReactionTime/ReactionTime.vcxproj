@@ -167,7 +167,7 @@
     <ClCompile Include="ImageActions.cpp" />
     <ClCompile Include="InputActions.cpp" />
     <ClCompile Include="MemoryCodeManager.cpp" />
-    <ClCompile Include="NetworkManager.cpp" />
+    <ClCompile Include="NetworkAssembler.cpp" />
     <ClCompile Include="RTManager.cpp" />
     <ClCompile Include="ScreenActions.cpp" />
   </ItemGroup>
@@ -176,7 +176,7 @@
     <ClInclude Include="ImageActions.h" />
     <ClInclude Include="InputActions.h" />
     <ClInclude Include="MemoryCodeManager.h" />
-    <ClInclude Include="NetworkManager.h" />
+    <ClInclude Include="NetworkAssembler.h" />
     <ClInclude Include="RTManager.h" />
     <ClInclude Include="ScreenActions.h" />
     <ClInclude Include="Structs.h" />

@@ -11,7 +11,7 @@
 #define PACKETSIZE 65536
 #define IPTOSBUFFERS 12
 
-class __declspec(dllexport) NetworkManager
+class __declspec(dllexport) NetworkAssembler
 {
 private:
 	static void __cdecl genericPacketsHandler(u_char *param, const struct pcap_pkthdr *header, const u_char *data);
@@ -36,20 +36,22 @@ private:
 public:
 	char ErrorMessage[PCAP_ERRBUF_SIZE];
 	
-	NetworkManager();
-	~NetworkManager();
+	NetworkAssembler();
+	~NetworkAssembler();
 
+	void PrintNetworkAdapters();
+	pcap_if_t* GetNetworkAdapters();
 	bool TargetAdapter(char* name);
 	bool TargetAdapter(int index);
 	bool TargetAdapter(pcap_if_t* networkAdapter);
 	bool SetFilter(std::string filteringExpression);
 	bool StartCapture(bool isAsync = true);
 	bool StartCapture(void(*packetHandler)(u_char *param, const struct pcap_pkthdr *header, const u_char *data), bool isAsync = true);
-	void PrintNetworkAdapters();
-	void SendPacket(ethernetHeader* ethernet, ipHeader* ip, tcpHeader* tcp, char* payload, unsigned int payloadLength);
 	ipHeader* CreateIpHeader(PCTSTR sourceIpAddress, PCTSTR destinationIpAddress, unsigned int payloadLength, unsigned char protocol = IPPROTO_TCP, unsigned char ttl = 3);
-	tcpHeader* CreateTcpHeader(unsigned short sourcePort, unsigned short destinationPort, unsigned int sequence, unsigned int acknowledge, unsigned short windowsSize = 64240);
+	tcpHeader* CreateTcpHeader(unsigned short sourcePort, unsigned short destinationPort, unsigned int sequence, unsigned int acknowledge, tcpFlags flags, unsigned short windowsSize = 64240);
 	ethernetHeader* CreateEthernetHeader(unsigned char sourceMac[6], unsigned char destinationMac[6], unsigned short type = 0x0008);
-	pcap_if_t* GetNetworkAdapters();
+	arpHeader* CreateArpHeader(u_short opcode, u_char senderMAC[6], PCTSTR senderIP, u_char targetMAC[6], PCTSTR targetIP);
+	void SendPacket(ethernetHeader* ethernet, ipHeader* ip, tcpHeader* tcp, char* payload, unsigned int payloadLength);
+	void SendPacket(ethernetHeader* ethernet, arpHeader* arp);
 };
 

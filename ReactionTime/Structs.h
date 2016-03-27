@@ -24,7 +24,7 @@ struct ethernetHeader {
 };
 
 /* IP header */
-typedef struct ipHeader
+struct ipHeader
 {
 	unsigned char  ip_header_len : 4;  // 4-bit header length (in 32-bit words) normally=5 (Means 20 Bytes may be 24 also)
 	unsigned char  ip_version : 4;  // 4-bit IPv4 version
@@ -79,6 +79,32 @@ struct tcpHeader
 	unsigned short window; // window
 	unsigned short checksum; // checksum
 	unsigned short urgent_pointer; // urgent pointer
+};
+
+struct arpHeader 
+{
+	u_short htype;    /* Hardware Type           */
+	u_short ptype;    /* Protocol Type           */
+	u_char hlen;        /* Hardware Address Length */
+	u_char plen;        /* Protocol Address Length */
+	u_short oper;     /* Operation Code          */
+	u_char sha[6];      /* Sender hardware address */
+	u_char spa[4];      /* Sender IP address       */
+	u_char tha[6];      /* Target hardware address */
+	u_char tpa[4];      /* Target IP address       */
+};
+
+struct tcpFlags
+{
+	unsigned char fin : 1; //Finish Flag
+	unsigned char syn : 1; //Synchronise Flag
+	unsigned char rst : 1; //Reset Flag
+	unsigned char psh : 1; //Push Flag
+	unsigned char ack : 1; //Acknowledgement Flag
+	unsigned char urg : 1; //Urgent Flag
+
+	unsigned char ecn : 1; //ECN-Echo Flag
+	unsigned char cwr : 1; //Congestion Window Reduced Flag
 };
 
 struct ImageDetails

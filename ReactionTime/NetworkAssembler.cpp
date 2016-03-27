@@ -1,10 +1,10 @@
-#include "NetworkManager.h"
+#include "NetworkAssembler.h"
 
 using namespace std;
 
-pcap_t* NetworkManager::m_ActiveAdapterHandle;
+pcap_t* NetworkAssembler::m_ActiveAdapterHandle;
 
-bool NetworkManager::translatePacket(const u_char* packet, ethernetHeader** ethernet, ipHeader** ip, tcpHeader** tcp, char** payload)
+bool NetworkAssembler::translatePacket(const u_char* packet, ethernetHeader** ethernet, ipHeader** ip, tcpHeader** tcp, char** payload)
 {
 	u_int ipHeaderLength;
 	u_int tcpHeaderLength;
@@ -32,7 +32,7 @@ bool NetworkManager::translatePacket(const u_char* packet, ethernetHeader** ethe
 	return false;
 }
 
-void __cdecl NetworkManager::genericPacketsHandler(u_char* param, const pcap_pkthdr* header, const u_char* packet)
+void __cdecl NetworkAssembler::genericPacketsHandler(u_char* param, const pcap_pkthdr* header, const u_char* packet)
 {
 	ethernetHeader* ethernet;
 	ipHeader* ip;
@@ -49,7 +49,7 @@ void __cdecl NetworkManager::genericPacketsHandler(u_char* param, const pcap_pkt
 
 		u_int payloadLength = header->caplen - ETHERNET_LENGTH - ipHeaderLength - tcpHeaderLength;
 	
-		for (int index = 0; index < payloadLength; index++)
+		for (u_int index = 0; index < payloadLength; index++)
 		{
 			if (isprint(payload[index]))
 				cout << payload[index];
@@ -60,18 +60,18 @@ void __cdecl NetworkManager::genericPacketsHandler(u_char* param, const pcap_pkt
 	}
 }
 
-NetworkManager::NetworkManager()
+NetworkAssembler::NetworkAssembler()
 {
 	initializeAttachedDevices();
 }
 
-NetworkManager::~NetworkManager()
+NetworkAssembler::~NetworkAssembler()
 {
 	// Free all devices
 	pcap_freealldevs(m_NetworkAdapters);
 }
 
-pcap_if_t* NetworkManager::getNetworkAdapterByName(char* name)
+pcap_if_t* NetworkAssembler::getNetworkAdapterByName(char* name)
 {
 	int nameLength = strnlen_s(name, 100);
 	pcap_if_t* ret_NetworkAdapter = m_NetworkAdapters;
@@ -83,7 +83,7 @@ pcap_if_t* NetworkManager::getNetworkAdapterByName(char* name)
 	return ret_NetworkAdapter;
 }
 
-pcap_if_t* NetworkManager::getNetworkAdapterByIndex(int index)
+pcap_if_t* NetworkAssembler::getNetworkAdapterByIndex(int index)
 {
 	pcap_if_t* ret_NetworkAdapter = m_NetworkAdapters;
 
@@ -96,7 +96,7 @@ pcap_if_t* NetworkManager::getNetworkAdapterByIndex(int index)
 	return ret_NetworkAdapter;
 }
 
-void NetworkManager::printNetworkAdapter(pcap_if_t* networkAdapter)
+void NetworkAssembler::printNetworkAdapter(pcap_if_t* networkAdapter)
 {
 	if (!networkAdapter)
 		return;
@@ -112,7 +112,7 @@ void NetworkManager::printNetworkAdapter(pcap_if_t* networkAdapter)
 	printAdapterAddresses(networkAdapter->addresses);
 }
 
-char* NetworkManager::convertIpToString(u_long in)
+char* NetworkAssembler::convertIpToString(u_long in)
 {
 	static char output[IPTOSBUFFERS][16];
 	static short which;
@@ -124,7 +124,7 @@ char* NetworkManager::convertIpToString(u_long in)
 	return output[which];
 }
 
-unsigned short NetworkManager::calculateChecksum(unsigned short* ip, int length)
+unsigned short NetworkAssembler::calculateChecksum(unsigned short* ip, int length)
 {
 	int i, sum = 0;
 
@@ -138,7 +138,7 @@ unsigned short NetworkManager::calculateChecksum(unsigned short* ip, int length)
 	return (u_short)~sum;
 }
 
-char* NetworkManager::ConvertIpv6ToString(struct sockaddr *socketAddress, char *address, int addressLength)
+char* NetworkAssembler::ConvertIpv6ToString(struct sockaddr *socketAddress, char *address, int addressLength)
 {
 	socklen_t sockaddrlen;
 
@@ -160,7 +160,7 @@ char* NetworkManager::ConvertIpv6ToString(struct sockaddr *socketAddress, char *
 	return address;
 }
 
-void NetworkManager::printAdapterAddresses(pcap_addr_t* adapterAddresses)
+void NetworkAssembler::printAdapterAddresses(pcap_addr_t* adapterAddresses)
 {
 	char ip6str[128];
 
@@ -193,13 +193,13 @@ void NetworkManager::printAdapterAddresses(pcap_addr_t* adapterAddresses)
 	}
 }
 
-void NetworkManager::initializeAttachedDevices()
+void NetworkAssembler::initializeAttachedDevices()
 {
 	// Getting the network adapters information,
 	pcap_findalldevs_ex(PCAP_SRC_IF_STRING, NULL /* auth is not needed*/, &m_NetworkAdapters, ErrorMessage);
 }
 
-unsigned int NetworkManager::getNetmask()
+unsigned int NetworkAssembler::getNetmask()
 {
 	if (m_ActiveAdapter->addresses != NULL)
 		return ((struct sockaddr_in *)(m_ActiveAdapter->addresses->netmask))->sin_addr.S_un.S_addr;
@@ -207,40 +207,40 @@ unsigned int NetworkManager::getNetmask()
 		return 0xFFFFFF;
 }
 
-unsigned int NetworkManager::getTcpLength(tcpHeader* tcp)
+unsigned int NetworkAssembler::getTcpLength(tcpHeader* tcp)
 {
 	return tcp->data_offset * 4;
 }
 
-unsigned int NetworkManager::getIpLength(ipHeader* ip)
+unsigned int NetworkAssembler::getIpLength(ipHeader* ip)
 {
 	return ip->ip_header_len * 4;
 }
 
-void NetworkManager::PrintNetworkAdapters()
+void NetworkAssembler::PrintNetworkAdapters()
 {
 	for (pcap_if_t* networkAdapter = m_NetworkAdapters; networkAdapter != NULL; networkAdapter = networkAdapter->next)
 		printNetworkAdapter(networkAdapter);
 }
 
-pcap_if_t* NetworkManager::GetNetworkAdapters()
+pcap_if_t* NetworkAssembler::GetNetworkAdapters()
 {
 	if (m_NetworkAdapters != NULL)
 		return m_NetworkAdapters;
 	return NULL;
 }
 
-bool NetworkManager::TargetAdapter(char* name)
+bool NetworkAssembler::TargetAdapter(char* name)
 {
 	return TargetAdapter(getNetworkAdapterByName(name));
 }
 
-bool NetworkManager::TargetAdapter(int index)
+bool NetworkAssembler::TargetAdapter(int index)
 {
 	return TargetAdapter(getNetworkAdapterByIndex(index));
 }
 
-bool NetworkManager::TargetAdapter(pcap_if_t* networkAdapter)
+bool NetworkAssembler::TargetAdapter(pcap_if_t* networkAdapter)
 {
 	if (networkAdapter == NULL)
 		return false;
@@ -254,7 +254,7 @@ bool NetworkManager::TargetAdapter(pcap_if_t* networkAdapter)
 	return true;
 }
 
-bool NetworkManager::StartCapture(bool isAsync)
+bool NetworkAssembler::StartCapture(bool isAsync)
 {
 	if (m_ActiveAdapterHandle == NULL)
 		return false;
@@ -267,7 +267,7 @@ bool NetworkManager::StartCapture(bool isAsync)
 	return true;
 }
 
-bool NetworkManager::StartCapture(void(*packetHandler)(u_char *param, const struct pcap_pkthdr *header, const u_char *data), bool isAsync)
+bool NetworkAssembler::StartCapture(void(*packetHandler)(u_char *param, const struct pcap_pkthdr *header, const u_char *data), bool isAsync)
 {	
 	if (m_ActiveAdapterHandle == NULL)
 		return false;
@@ -280,7 +280,7 @@ bool NetworkManager::StartCapture(void(*packetHandler)(u_char *param, const stru
 	return true;
 }
 
-bool NetworkManager::SetFilter(string filteringExpression)
+bool NetworkAssembler::SetFilter(string filteringExpression)
 {
 	unsigned int netmask;
 	bpf_program compiledFilterCode;
@@ -299,7 +299,7 @@ bool NetworkManager::SetFilter(string filteringExpression)
 	return true;
 }
 
-tcpHeader* NetworkManager::CreateTcpHeader(unsigned short sourcePort, unsigned short destinationPort, unsigned int sequence, unsigned int acknowledge, unsigned short windowsSize)
+tcpHeader* NetworkAssembler::CreateTcpHeader(unsigned short sourcePort, unsigned short destinationPort, unsigned int sequence, unsigned int acknowledge, tcpFlags flags, unsigned short windowsSize)
 {
 	tcpHeader* ret_TcpHeader = new tcpHeader;
 
@@ -309,14 +309,14 @@ tcpHeader* NetworkManager::CreateTcpHeader(unsigned short sourcePort, unsigned s
 	ret_TcpHeader->acknowledge = htons(acknowledge);
 	ret_TcpHeader->reserved_part1 = 0;
 	ret_TcpHeader->data_offset = 5;
-	ret_TcpHeader->fin = 0;
-	ret_TcpHeader->syn = 0;
-	ret_TcpHeader->rst = 0;
-	ret_TcpHeader->psh = 0;
-	ret_TcpHeader->ack = 0;
-	ret_TcpHeader->urg = 0;
-	ret_TcpHeader->ecn = 0;
-	ret_TcpHeader->cwr = 0;
+	ret_TcpHeader->fin = flags.fin;
+	ret_TcpHeader->syn = flags.syn;
+	ret_TcpHeader->rst = flags.rst;
+	ret_TcpHeader->psh = flags.psh;
+	ret_TcpHeader->ack = flags.ack;
+	ret_TcpHeader->urg = flags.urg;
+	ret_TcpHeader->ecn = flags.ecn;
+	ret_TcpHeader->cwr = flags.cwr;
 	ret_TcpHeader->window = htons(windowsSize);
 	ret_TcpHeader->checksum = 0;
 	ret_TcpHeader->urgent_pointer = 0;
@@ -324,7 +324,7 @@ tcpHeader* NetworkManager::CreateTcpHeader(unsigned short sourcePort, unsigned s
 	return ret_TcpHeader;
 }
 
-ipHeader* NetworkManager::CreateIpHeader(PCTSTR sourceIpAddress, PCTSTR destinationIpAddress, unsigned int payloadLength, unsigned char protocol, unsigned char ttl)
+ipHeader* NetworkAssembler::CreateIpHeader(PCTSTR sourceIpAddress, PCTSTR destinationIpAddress, unsigned int payloadLength, unsigned char protocol, unsigned char ttl)
 {
 	ipHeader* ret_IpHeader = new ipHeader;
 
@@ -348,7 +348,7 @@ ipHeader* NetworkManager::CreateIpHeader(PCTSTR sourceIpAddress, PCTSTR destinat
 	return ret_IpHeader;
 }
 
-ethernetHeader* NetworkManager::CreateEthernetHeader(unsigned char sourceMac[6], unsigned char destinationMac[6], unsigned short type)
+ethernetHeader* NetworkAssembler::CreateEthernetHeader(unsigned char sourceMac[6], unsigned char destinationMac[6], unsigned short type)
 {
 	ethernetHeader* ret_ethernetHeader = new ethernetHeader;
 	
@@ -359,7 +359,45 @@ ethernetHeader* NetworkManager::CreateEthernetHeader(unsigned char sourceMac[6],
 	return ret_ethernetHeader;
 }
 
-void NetworkManager::SendPacket(ethernetHeader* ethernet, ipHeader* ip, tcpHeader* tcp, char* payload, unsigned int payloadLength)
+arpHeader* NetworkAssembler::CreateArpHeader(u_short opcode, u_char senderMAC[6], PCTSTR senderIP, u_char targetMAC[6], PCTSTR targetIP)
+{
+	arpHeader* ret_arpHeader = new arpHeader;
+
+	ret_arpHeader->htype = 0x0100; // Ethernet (1).
+	ret_arpHeader->ptype = 0x0008; // IP Protocol.
+	ret_arpHeader->hlen = 6;
+	ret_arpHeader->plen = 4;
+	ret_arpHeader->oper = opcode; // Request/Reply.
+	
+	memcpy(ret_arpHeader->sha, senderMAC, 6);
+	InetPton(AF_INET, senderIP, &ret_arpHeader->spa);
+	memcpy(ret_arpHeader->tha, targetMAC, 6);
+	InetPton(AF_INET, targetIP, &ret_arpHeader->tpa);
+
+	return ret_arpHeader;
+}
+
+void NetworkAssembler::SendPacket(ethernetHeader* ethernet, arpHeader* arp)
+{
+	unsigned int packetLength = ETHERNET_LENGTH + sizeof(arpHeader);
+	
+	if (packetLength < 60) // minimum packet length.
+		packetLength = 60;
+
+	const unsigned char* packet = new unsigned char[packetLength];
+
+	ethernetHeader* ethernetOffset = (ethernetHeader*)packet;
+	arpHeader* arpOffset = (arpHeader*)(packet + ETHERNET_LENGTH);
+
+	memcpy(ethernetOffset, ethernet, ETHERNET_LENGTH);
+	memcpy(arpOffset, arp, sizeof(arpHeader));
+
+	pcap_sendpacket(m_ActiveAdapterHandle, packet, packetLength);
+
+	delete packet;
+}
+
+void NetworkAssembler::SendPacket(ethernetHeader* ethernet, ipHeader* ip, tcpHeader* tcp, char* payload, unsigned int payloadLength)
 {
 	unsigned int packetLength = payloadLength + ETHERNET_LENGTH + getIpLength(ip) + getTcpLength(tcp);
 	const unsigned char* packet = new unsigned char[packetLength];
