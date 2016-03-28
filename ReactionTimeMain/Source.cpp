@@ -41,7 +41,6 @@ void createArpReplyAndSend(NetworkAssembler* networkAssembler, u_char targetMAC[
 	networkAssembler->SendPacket(ethernet, arp);
 }
 
-
 void createCustomPacketAndSend()
 {
 	auto networkManager = make_unique<NetworkAssembler>();
