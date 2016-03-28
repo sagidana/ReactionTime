@@ -43,6 +43,7 @@ public:
 	pcap_if_t* GetNetworkAdapters();
 	bool TargetAdapter(char* name);
 	bool TargetAdapter(int index);
+	bool IsSet();
 	bool TargetAdapter(pcap_if_t* networkAdapter);
 	bool SetFilter(std::string filteringExpression);
 	bool StartCapture(bool isAsync = true);

@@ -230,6 +230,11 @@ pcap_if_t* NetworkAssembler::GetNetworkAdapters()
 	return NULL;
 }
 
+bool NetworkAssembler::IsSet()
+{
+	return m_ActiveAdapterHandle != nullptr;
+}
+
 bool NetworkAssembler::TargetAdapter(char* name)
 {
 	return TargetAdapter(getNetworkAdapterByName(name));

@@ -168,6 +168,7 @@
     <ClCompile Include="InputActions.cpp" />
     <ClCompile Include="MemoryCodeManager.cpp" />
     <ClCompile Include="NetworkAssembler.cpp" />
+    <ClCompile Include="NetworkReact.cpp" />
     <ClCompile Include="RTManager.cpp" />
     <ClCompile Include="ScreenActions.cpp" />
   </ItemGroup>
@@ -177,6 +178,7 @@
     <ClInclude Include="InputActions.h" />
     <ClInclude Include="MemoryCodeManager.h" />
     <ClInclude Include="NetworkAssembler.h" />
+    <ClInclude Include="NetworkReact.h" />
     <ClInclude Include="RTManager.h" />
     <ClInclude Include="ScreenActions.h" />
     <ClInclude Include="Structs.h" />
