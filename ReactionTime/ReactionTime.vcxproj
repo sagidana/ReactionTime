@@ -164,24 +164,20 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="HookManager.cpp" />
-    <ClCompile Include="ImageActions.cpp" />
+    <ClCompile Include="ImageReact.cpp" />
     <ClCompile Include="InputActions.cpp" />
-    <ClCompile Include="MemoryCodeManager.cpp" />
     <ClCompile Include="NetworkAssembler.cpp" />
     <ClCompile Include="NetworkReact.cpp" />
-    <ClCompile Include="RTManager.cpp" />
-    <ClCompile Include="ScreenActions.cpp" />
+    <ClCompile Include="ScreenReact.cpp" />
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="HookManager.h" />
-    <ClInclude Include="ImageActions.h" />
+    <ClInclude Include="ImageReact.h" />
     <ClInclude Include="InputActions.h" />
-    <ClInclude Include="MemoryCodeManager.h" />
     <ClInclude Include="NetworkAssembler.h" />
     <ClInclude Include="NetworkReact.h" />
-    <ClInclude Include="RTManager.h" />
-    <ClInclude Include="ScreenActions.h" />
-    <ClInclude Include="Structs.h" />
+    <ClInclude Include="ScreenReact.h" />
+    <ClInclude Include="StructsReact.h" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

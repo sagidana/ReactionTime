@@ -4,7 +4,7 @@ using namespace std;
 
 pcap_t* NetworkAssembler::m_ActiveAdapterHandle;
 
-bool NetworkAssembler::translatePacket(const u_char* packet, ethernetHeader** ethernet, ipHeader** ip, tcpHeader** tcp, char** payload)
+bool NetworkAssembler::AssemblePacket(const u_char* packet, ethernetHeader** ethernet, ipHeader** ip, tcpHeader** tcp, char** payload)
 {
 	u_int ipHeaderLength;
 	u_int tcpHeaderLength;
@@ -13,13 +13,13 @@ bool NetworkAssembler::translatePacket(const u_char* packet, ethernetHeader** et
 	{
 		*ethernet = (ethernetHeader*)(packet);
 		*ip = (ipHeader*)(packet + ETHERNET_LENGTH); // Found the ip header
-		ipHeaderLength = getIpLength(*ip);
+		ipHeaderLength = GetIpLength(*ip);
 
 		if (ipHeaderLength < 20) // Bad ip header
 			return false;
 
 		*tcp = (tcpHeader*)(packet + ETHERNET_LENGTH + ipHeaderLength); // Found the tcp header
-		tcpHeaderLength = getTcpLength(*tcp);
+		tcpHeaderLength = GetTcpLength(*tcp);
 
 		if (tcpHeaderLength < 20) // Bad tcp header
 			return false;
@@ -32,6 +32,73 @@ bool NetworkAssembler::translatePacket(const u_char* packet, ethernetHeader** et
 	return false;
 }
 
+string NetworkAssembler::GetDestinationIpAndPort(const u_char* packet, const struct pcap_pkthdr *header)
+{
+	ethernetHeader * ethernet;
+	ipHeader * ip;
+	tcpHeader * tcp;
+	char * payload;
+
+	if (NetworkAssembler::AssemblePacket(packet, &ethernet, &ip, &tcp, &payload))
+	{
+		u_int ipHeaderLength = NetworkAssembler::GetIpLength(ip);
+		u_int tcpHeaderLength = NetworkAssembler::GetTcpLength(tcp);
+
+		if (header->caplen < ETHERNET_LENGTH + ipHeaderLength + tcpHeaderLength) //Length of the data captured was not enough,
+			return nullptr;
+
+		string destinationPort = NetworkAssembler::ConvertPortToString(tcp->dest_port);
+		string destinationIpAddress = NetworkAssembler::ConvertIpToString(ip->ip_destaddr);
+
+		return destinationIpAddress + ":" + destinationPort;
+	}
+	return nullptr;
+}
+
+string NetworkAssembler::GetSourceIpAndPort(const u_char* packet, const struct pcap_pkthdr *header)
+{
+	ethernetHeader * ethernet;
+	ipHeader * ip;
+	tcpHeader * tcp;
+	char * payload;
+
+	if (NetworkAssembler::AssemblePacket(packet, &ethernet, &ip, &tcp, &payload))
+	{
+		u_int ipHeaderLength = NetworkAssembler::GetIpLength(ip);
+		u_int tcpHeaderLength = NetworkAssembler::GetTcpLength(tcp);
+
+		if (header->caplen < ETHERNET_LENGTH + ipHeaderLength + tcpHeaderLength) //Length of the data captured was not enough,
+			return nullptr;
+
+		string sourcePort = NetworkAssembler::ConvertPortToString(tcp->source_port);
+		string sourceIpAddress = NetworkAssembler::ConvertIpToString(ip->ip_srcaddr);
+
+		return sourceIpAddress + ":" + sourcePort;
+	}
+	return nullptr;
+}
+
+string NetworkAssembler::ExportHttpPayload(const u_char* packet, const struct pcap_pkthdr *header)
+{
+	ethernetHeader * ethernet;
+	ipHeader * ip;
+	tcpHeader * tcp;
+	char * payload;
+
+	if (NetworkAssembler::AssemblePacket(packet, &ethernet, &ip, &tcp, &payload))
+	{
+		u_int ipHeaderLength = NetworkAssembler::GetIpLength(ip);
+		u_int tcpHeaderLength = NetworkAssembler::GetTcpLength(tcp);
+
+		if (header->caplen < ETHERNET_LENGTH + ipHeaderLength + tcpHeaderLength) //Length of the data captured was not enough,
+			return nullptr;
+
+		istringstream httpStream(payload);
+		
+		return httpStream.str();
+	}
+}
+
 void __cdecl NetworkAssembler::genericPacketsHandler(u_char* param, const pcap_pkthdr* header, const u_char* packet)
 {
 	ethernetHeader* ethernet;
@@ -39,10 +106,10 @@ void __cdecl NetworkAssembler::genericPacketsHandler(u_char* param, const pcap_p
 	tcpHeader* tcp;
 	char* payload;
 	
-	if (translatePacket(packet, &ethernet, &ip, &tcp, &payload))
+	if (AssemblePacket(packet, &ethernet, &ip, &tcp, &payload))
 	{
-		u_int ipHeaderLength = getIpLength(ip);
-		u_int tcpHeaderLength = getTcpLength(tcp);
+		u_int ipHeaderLength = GetIpLength(ip);
+		u_int tcpHeaderLength = GetTcpLength(tcp);
 		
 		if (header->caplen < ETHERNET_LENGTH + ipHeaderLength + tcpHeaderLength) //Length of the data captured was not enough,
 			return;
@@ -112,7 +179,17 @@ void NetworkAssembler::printNetworkAdapter(pcap_if_t* networkAdapter)
 	printAdapterAddresses(networkAdapter->addresses);
 }
 
-char* NetworkAssembler::convertIpToString(u_long in)
+string NetworkAssembler::ConvertPortToString(unsigned short port)
+{
+	short littleEndianPort = ntohs(port);
+	ostringstream convert;
+	
+	convert << littleEndianPort;
+
+	return convert.str();
+}
+
+string NetworkAssembler::ConvertIpToString(u_long in)
 {
 	static char output[IPTOSBUFFERS][16];
 	static short which;
@@ -121,7 +198,8 @@ char* NetworkAssembler::convertIpToString(u_long in)
 	p = (u_char *)&in;
 	which = (which + 1 == IPTOSBUFFERS ? 0 : which + 1);
 	_snprintf_s(output[which], sizeof(output[which]), sizeof(output[which]), "%d.%d.%d.%d", p[0], p[1], p[2], p[3]);
-	return output[which];
+
+	return string(output[which]);
 }
 
 unsigned short NetworkAssembler::calculateChecksum(unsigned short* ip, int length)
@@ -171,13 +249,13 @@ void NetworkAssembler::printAdapterAddresses(pcap_addr_t* adapterAddresses)
 		case AF_INET:
 			printf("\tAddress Family Name: AF_INET\n");
 			if (adapterAddress->addr)
-				cout << "\tAdsress: " << convertIpToString(((struct sockaddr_in *)adapterAddress->addr)->sin_addr.s_addr) << endl;
+				cout << "\tAdsress: " << ConvertIpToString(((struct sockaddr_in *)adapterAddress->addr)->sin_addr.s_addr).c_str() << endl;
 			if (adapterAddress->netmask)
-				cout << "\tNetmask: " << convertIpToString(((struct sockaddr_in *)adapterAddress->netmask)->sin_addr.s_addr) << endl;
+				cout << "\tNetmask: " << ConvertIpToString(((struct sockaddr_in *)adapterAddress->netmask)->sin_addr.s_addr).c_str() << endl;
 			if (adapterAddress->broadaddr)
-				cout << "\tBroadcast Address: " << convertIpToString(((struct sockaddr_in *)adapterAddress->broadaddr)->sin_addr.s_addr) << endl;
+				cout << "\tBroadcast Address: " << ConvertIpToString(((struct sockaddr_in *)adapterAddress->broadaddr)->sin_addr.s_addr).c_str() << endl;
 			if (adapterAddress->dstaddr)
-				cout << "\tDestination Address: " << convertIpToString(((struct sockaddr_in *)adapterAddress->dstaddr)->sin_addr.s_addr) << endl;
+				cout << "\tDestination Address: " << ConvertIpToString(((struct sockaddr_in *)adapterAddress->dstaddr)->sin_addr.s_addr).c_str() << endl;
 			break;
 
 		case AF_INET6:
@@ -207,12 +285,12 @@ unsigned int NetworkAssembler::getNetmask()
 		return 0xFFFFFF;
 }
 
-unsigned int NetworkAssembler::getTcpLength(tcpHeader* tcp)
+unsigned int NetworkAssembler::GetTcpLength(tcpHeader* tcp)
 {
 	return tcp->data_offset * 4;
 }
 
-unsigned int NetworkAssembler::getIpLength(ipHeader* ip)
+unsigned int NetworkAssembler::GetIpLength(ipHeader* ip)
 {
 	return ip->ip_header_len * 4;
 }
@@ -404,17 +482,17 @@ void NetworkAssembler::SendPacket(ethernetHeader* ethernet, arpHeader* arp)
 
 void NetworkAssembler::SendPacket(ethernetHeader* ethernet, ipHeader* ip, tcpHeader* tcp, char* payload, unsigned int payloadLength)
 {
-	unsigned int packetLength = payloadLength + ETHERNET_LENGTH + getIpLength(ip) + getTcpLength(tcp);
+	unsigned int packetLength = payloadLength + ETHERNET_LENGTH + GetIpLength(ip) + GetTcpLength(tcp);
 	const unsigned char* packet = new unsigned char[packetLength];
 
 	ethernetHeader* ethernetOffset = (ethernetHeader*)packet;
 	ipHeader* ipOffset = (ipHeader*)(packet + ETHERNET_LENGTH);
-	tcpHeader* tcpOffset = (tcpHeader*)(packet + ETHERNET_LENGTH + getIpLength(ip));
-	char* payloadOffset = (char*)(packet + ETHERNET_LENGTH + getIpLength(ip) + getTcpLength(tcp));
+	tcpHeader* tcpOffset = (tcpHeader*)(packet + ETHERNET_LENGTH + GetIpLength(ip));
+	char* payloadOffset = (char*)(packet + ETHERNET_LENGTH + GetIpLength(ip) + GetTcpLength(tcp));
 
 	memcpy(ethernetOffset, ethernet, ETHERNET_LENGTH);
-	memcpy(ipOffset, ip, getIpLength(ip));
-	memcpy(tcpOffset, tcp, getTcpLength(tcp));
+	memcpy(ipOffset, ip, GetIpLength(ip));
+	memcpy(tcpOffset, tcp, GetTcpLength(tcp));
 	memcpy(payloadOffset, payload, payloadLength);
 
 	pcap_sendpacket(m_ActiveAdapterHandle, packet, packetLength);

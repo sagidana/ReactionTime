@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 2013
-VisualStudioVersion = 12.0.31101.0
+VisualStudioVersion = 12.0.30501.0
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ReactionTime", "ReactionTime\ReactionTime.vcxproj", "{5447AA71-3AF9-4B3D-812C-A8F3E1F08593}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ReactionTimeMain", "ReactionTimeMain\ReactionTimeMain.vcxproj", "{0121EF98-A9E6-44BB-8A13-E323C18619A7}"
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PacketInterceptDriver", "PacketInterceptDriver\PacketInterceptDriver.vcxproj", "{BC7D9596-42F5-4684-8136-2BC1DF438F9A}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -30,6 +32,12 @@ Global
 		{0121EF98-A9E6-44BB-8A13-E323C18619A7}.Release|Win32.Build.0 = Release|Win32
 		{0121EF98-A9E6-44BB-8A13-E323C18619A7}.Release|x64.ActiveCfg = Release|x64
 		{0121EF98-A9E6-44BB-8A13-E323C18619A7}.Release|x64.Build.0 = Release|x64
+		{BC7D9596-42F5-4684-8136-2BC1DF438F9A}.Debug|Win32.ActiveCfg = Debug|Win32
+		{BC7D9596-42F5-4684-8136-2BC1DF438F9A}.Debug|Win32.Build.0 = Debug|Win32
+		{BC7D9596-42F5-4684-8136-2BC1DF438F9A}.Debug|x64.ActiveCfg = Debug|Win32
+		{BC7D9596-42F5-4684-8136-2BC1DF438F9A}.Release|Win32.ActiveCfg = Release|Win32
+		{BC7D9596-42F5-4684-8136-2BC1DF438F9A}.Release|Win32.Build.0 = Release|Win32
+		{BC7D9596-42F5-4684-8136-2BC1DF438F9A}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

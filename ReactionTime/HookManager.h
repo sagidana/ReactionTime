@@ -1,7 +1,7 @@
 #pragma once
 
 #include <Windows.h>
-#include "Structs.h"
+#include "StructsReact.h"
 #include <mutex>
 #include <thread>
 #include <list>

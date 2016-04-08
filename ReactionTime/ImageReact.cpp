@@ -1,13 +1,13 @@
-#include "ImageActions.h"
+#include "ImageReact.h"
 
-ImageActions* ImageActions::m_Instance;
+ImageReact* ImageReact::m_Instance;
 
-ImageActions::ImageActions()
+ImageReact::ImageReact()
 {
 	
 }
 
-POINT* ImageActions::FindFirstColorPosition(ImageDetails* imageDetails, COLORREF color)
+POINT* ImageReact::FindFirstColorPosition(ImageDetails* imageDetails, COLORREF color)
 {
 	POINT* ret_Position = new POINT();
 
@@ -36,13 +36,13 @@ POINT* ImageActions::FindFirstColorPosition(ImageDetails* imageDetails, COLORREF
 	return NULL;
 }
 
-ImageActions* ImageActions::GetInstance()
+ImageReact* ImageReact::GetInstance()
 {
 	if (m_Instance == NULL)
-		m_Instance = new ImageActions();
+		m_Instance = new ImageReact();
 	return  m_Instance;
 }
 
-ImageActions::~ImageActions()
+ImageReact::~ImageReact()
 {
 }

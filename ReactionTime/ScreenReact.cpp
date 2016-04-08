@@ -1,20 +1,20 @@
-#include "ScreenActions.h"
+#include "ScreenReact.h"
 
-std::list<RECT> ScreenActions::m_MonitorsRects;
+std::list<RECT> ScreenReact::m_MonitorsRects;
 
-ScreenActions::ScreenActions()
+ScreenReact::ScreenReact()
 {
 	initializeScreenParameters();
 }
 
-BOOL CALLBACK ScreenActions::monitorsEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
+BOOL CALLBACK ScreenReact::monitorsEnumProc(HMONITOR hMonitor, HDC hdcMonitor, LPRECT lprcMonitor, LPARAM dwData)
 {
 	m_MonitorsRects.push_front(*lprcMonitor);
 
 	return TRUE;
 }
 
-void ScreenActions::initializeScreenParameters()
+void ScreenReact::initializeScreenParameters()
 {
 	m_Rectangle.right = GetSystemMetrics(SM_CXVIRTUALSCREEN);
 	m_Rectangle.left = GetSystemMetrics(SM_XVIRTUALSCREEN);
@@ -27,12 +27,12 @@ void ScreenActions::initializeScreenParameters()
 	ReleaseDC(NULL, hdc);
 }
 
-ImageDetails* ScreenActions::TakeScreenshot()
+ImageDetails* ScreenReact::TakeScreenshot()
 {
 	return TakeScreenshot(m_Rectangle);
 }
 
-ImageDetails* ScreenActions::TakeScreenshot(int displayNumber)
+ImageDetails* ScreenReact::TakeScreenshot(int displayNumber)
 {
 	int index = 0;
 
@@ -48,7 +48,7 @@ ImageDetails* ScreenActions::TakeScreenshot(int displayNumber)
 	return NULL;
 }
 
-ImageDetails* ScreenActions::TakeScreenshot(RECT rectangle)
+ImageDetails* ScreenReact::TakeScreenshot(RECT rectangle)
 {
 	int windowWidth = rectangle.right - rectangle.left;
 	int windowHeight = rectangle.bottom - rectangle.top;
@@ -82,7 +82,7 @@ ImageDetails* ScreenActions::TakeScreenshot(RECT rectangle)
 	return ret_ImageDetails;
 }
 
-ImageDetails* ScreenActions::TakeScreenshot(HWND hWindow)
+ImageDetails* ScreenReact::TakeScreenshot(HWND hWindow)
 {
 	RECT* windowRect = new RECT();
 
@@ -96,17 +96,17 @@ ImageDetails* ScreenActions::TakeScreenshot(HWND hWindow)
 	return NULL;
 }
 
-int ScreenActions::GetNumberOfMonitors()
+int ScreenReact::GetNumberOfMonitors()
 {
 	return m_MonitorsRects.size();
 }
 
-COLORREF ScreenActions::GetPixelColor(POINT position)
+COLORREF ScreenReact::GetPixelColor(POINT position)
 {
 	return GetPixel(GetDC(NULL), position.x, position.y);
 }
 
-POINT* ScreenActions::GetCursorPosition()
+POINT* ScreenReact::GetCursorPosition()
 {
 	POINT* position = new POINT();
 	
@@ -115,7 +115,7 @@ POINT* ScreenActions::GetCursorPosition()
 	return NULL;
 }
 
-POINT* ScreenActions::ConvertDisplayLocationToScreenPosition(POINT* imageLocation, int displayNumber)
+POINT* ScreenReact::ConvertDisplayLocationToScreenPosition(POINT* imageLocation, int displayNumber)
 {
 	POINT* ret_Position = new POINT();
 	int index = 0;
@@ -137,6 +137,6 @@ POINT* ScreenActions::ConvertDisplayLocationToScreenPosition(POINT* imageLocatio
 	return NULL;
 }
 
-ScreenActions::~ScreenActions()
+ScreenReact::~ScreenReact()
 {
 }
