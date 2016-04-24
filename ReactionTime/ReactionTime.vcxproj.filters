@@ -1,9 +1,6 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup>
-    <Filter Include="NetowrkReaction">
-      <UniqueIdentifier>{15f2d592-be87-40ea-aba0-9c7d5bfe0fba}</UniqueIdentifier>
-    </Filter>
     <Filter Include="Common">
       <UniqueIdentifier>{f53eea15-8fb2-4307-b636-87a850a201e5}</UniqueIdentifier>
     </Filter>
@@ -13,13 +10,16 @@
     <Filter Include="KeyboardReaction">
       <UniqueIdentifier>{af144e9e-a27c-4f85-baf4-ba11ceb8170d}</UniqueIdentifier>
     </Filter>
+    <Filter Include="NetworkReaction">
+      <UniqueIdentifier>{15f2d592-be87-40ea-aba0-9c7d5bfe0fba}</UniqueIdentifier>
+    </Filter>
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="NetworkAssembler.cpp">
-      <Filter>NetowrkReaction</Filter>
+      <Filter>NetworkReaction</Filter>
     </ClCompile>
     <ClCompile Include="NetworkReact.cpp">
-      <Filter>NetowrkReaction</Filter>
+      <Filter>NetworkReaction</Filter>
     </ClCompile>
     <ClCompile Include="InputActions.cpp">
       <Filter>KeyboardReaction</Filter>
@@ -36,10 +36,10 @@
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="NetworkAssembler.h">
-      <Filter>NetowrkReaction</Filter>
+      <Filter>NetworkReaction</Filter>
     </ClInclude>
     <ClInclude Include="NetworkReact.h">
-      <Filter>NetowrkReaction</Filter>
+      <Filter>NetworkReaction</Filter>
     </ClInclude>
     <ClInclude Include="InputActions.h">
       <Filter>KeyboardReaction</Filter>

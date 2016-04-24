@@ -4,6 +4,10 @@
     <ClInclude Include="Precompiled.h" />
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Source.cpp" />
+    <ClCompile Include="Precompiled.cpp" />
+    <ClCompile Include="Neutral.cpp" />
+  </ItemGroup>
+  <ItemGroup>
+    <Midl Include="Temp.idl" />
   </ItemGroup>
 </Project>

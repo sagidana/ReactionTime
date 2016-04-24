@@ -18,7 +18,7 @@ private:
 	static void __cdecl genericPacketsHandler(u_char *param, const struct pcap_pkthdr *header, const u_char *data);
 	static pcap_t* m_ActiveAdapterHandle;
 	
-	pcap_if_t* m_NetworkAdapters;
+	pcap_if_t* m_NetworkAdapters; 
 	pcap_if_t* m_ActiveAdapter;
 	
 	void initializeAttachedDevices();

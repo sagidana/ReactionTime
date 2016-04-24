@@ -9,6 +9,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "ReactionTimeMain", "Reactio
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PacketInterceptDriver", "PacketInterceptDriver\PacketInterceptDriver.vcxproj", "{BC7D9596-42F5-4684-8136-2BC1DF438F9A}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "Neutral", "Reacom\Reacom.vcxproj", "{F299A277-2A1D-4FBF-B718-A6A67BE0BA85}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -38,6 +40,12 @@ Global
 		{BC7D9596-42F5-4684-8136-2BC1DF438F9A}.Release|Win32.ActiveCfg = Release|Win32
 		{BC7D9596-42F5-4684-8136-2BC1DF438F9A}.Release|Win32.Build.0 = Release|Win32
 		{BC7D9596-42F5-4684-8136-2BC1DF438F9A}.Release|x64.ActiveCfg = Release|Win32
+		{F299A277-2A1D-4FBF-B718-A6A67BE0BA85}.Debug|Win32.ActiveCfg = Debug|Win32
+		{F299A277-2A1D-4FBF-B718-A6A67BE0BA85}.Debug|Win32.Build.0 = Debug|Win32
+		{F299A277-2A1D-4FBF-B718-A6A67BE0BA85}.Debug|x64.ActiveCfg = Debug|Win32
+		{F299A277-2A1D-4FBF-B718-A6A67BE0BA85}.Release|Win32.ActiveCfg = Release|Win32
+		{F299A277-2A1D-4FBF-B718-A6A67BE0BA85}.Release|Win32.Build.0 = Release|Win32
+		{F299A277-2A1D-4FBF-B718-A6A67BE0BA85}.Release|x64.ActiveCfg = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
